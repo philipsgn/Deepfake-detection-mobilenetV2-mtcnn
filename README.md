@@ -1,105 +1,137 @@
-# DeepFake Detection using MobileNetV2
+# Deepfake Detection using MobileNetV2
 
-## Overview
-This project aims to detect deepfake videos using **MobileNetV2** as the backbone model. The dataset used is **Celeb-DF v2**, and the pipeline includes frame extraction, preprocessing, model training, and evaluation.
+##  Introduction
+
+This project focuses on **deepfake video detection** by combining:
+
+* **MobileNetV2** as the main deep learning model
+* **MTCNN** for face detection and frame extraction from videos
+* **Celeb-DF v2 Dataset** for training and evaluation
+* **Grad-CAM** for model interpretability and visualization
+* **Streamlit** for deploying an interactive demo application
+
+The goal is to build a lightweight, efficient, and explainable deepfake detection system that is easy to deploy in real-world scenarios.
 
 ---
 
-## Project Structure
-DeepFake-Detection/
-│
-├── data/ # Celeb-DF-v2
-│ ├── Celeb-real
-│ ├── Celeb-synthesis
-│ 
-│
-├── src ├── data
-        │
-        ├── model_MobileNetV2/ # Model architecture, training and checkpoint scripts
-        │
-        ├──preprocessing/ # Scripts for frame extraction, resizing, augmentation
-        │
-        ├──evaluation/
-        └── README.md
-        └── venv
+##  Dataset
 
-# Main libraries used:
+### Celeb-DF v2
 
-- tensorflow / keras
+* Contains both **REAL** and **FAKE (deepfake)** videos
+* Widely used benchmark dataset for deepfake detection research
 
-- onnxruntime
+### Data Preprocessing
 
-- opencv-python
+1. Load videos from the Celeb-DF v2 dataset
+2. Extract frames from each video
+3. Apply **MTCNN** to:
 
-- numpy, pandas
+   * Detect faces
+   * Crop and align facial regions
+4. Resize cropped faces to **224x224**, compatible with MobileNetV2 input
 
-- scikit-learn
+### Data Balancing
 
-- matplotlib, seaborn
+* The dataset is **balanced between REAL and FAKE classes** to reduce class imbalance
+* Techniques may include:
 
-- tqdm
+  * Undersampling
+  * Oversampling
 
-# Dataset
+---
 
-- Celeb-DF v2: High-quality deepfake dataset.
+##  Model
 
-- Frame extraction is done using ONNX models.
+### MobileNetV2
 
-- Preprocessing steps:
+* Lightweight CNN architecture optimized for speed and efficiency
+* Suitable for real-time and web-based deployment
 
-- Resize frames to (160, 160) for MobileNetV2.
+#### Overall Architecture:
 
-- Normalize pixel values.
+* Backbone: MobileNetV2 (pretrained on ImageNet)
+* Global Average Pooling
+* Fully Connected Layers
+* Output: Binary Classification (REAL / FAKE)
 
-- Balance classes using resampling
+---
+
+##  Training
+
+* Loss Function: Binary Cross Entropy
+* Optimizer: Adam
+* Evaluation Metrics:
+
+  * Accuracy
+  * Precision
+  * Recall
+  * F1-score
+
+---
+
+##  Model Evaluation
+
+### Grad-CAM
+
+* **Grad-CAM** is used to visualize regions of the face that the model focuses on
+* Helps to:
+
+  * Interpret model decisions
+  * Identify important deepfake-related features (eyes, mouth, facial boundaries, etc.)
+
+### Evaluation Analysis
+
+* Compare predictions on REAL vs FAKE samples
+* Analyze Grad-CAM heatmaps to verify model reliability and reasoning
+
+---
+
+##  Deployment with Streamlit
+
+The Streamlit application allows users to:
+
+* Upload a video or image
+* Automatically:
+
+  * Extract frames
+  * Detect and crop faces using MTCNN
+  * Predict REAL / FAKE using MobileNetV2
+* Visualize:
+
+  * Prediction results
+  * Grad-CAM heatmaps
+
+Run the application:
+
+```bash
+streamlit run app.py
+```
+
+---
 
 
-# Model Architecture
+##  Technologies Used
 
-- Base model: MobileNetV2 (pretrained on ImageNet)
+* Python
+* TensorFlow / PyTorch
+* OpenCV
+* MTCNN
+* Streamlit
+* Grad-CAM
 
-- Custom top layers:
+---
 
-- GlobalAveragePooling2D
+##  Conclusion
 
-- Dense layers with BatchNormalization and Dropout
+This project presents a complete pipeline for **Deepfake Detection**, including:
 
-- Final output: 1 neuron (binary classification)
+* Data preprocessing and balancing
+* Training an efficient and lightweight deep learning model
+* Model interpretability using Grad-CAM
+* Real-world deployment via Streamlit
 
-- Optimizer: Adam
+The system is suitable for research, demonstrations, and further extensions in practical applications.
 
-- Loss: Binary Crossentropy
+---
 
-- : L2 weight decay
-
-
-# Training
-
-- Data split: Train / Validation / Test
-
-- Class imbalance handled with:
-
-- Class weights or resampling
-
-# Callbacks:
-
-- ModelCheckpoint
-
-- EarlyStopping
-
-- ReduceLROnPlateau
-
-- Data augmentation using ImageDataGenerator.
-
-
-# Evaluation
-
-* Metrics:
-
-- Accuracy, F1-score
-
-- ROC-AUC
-
-- Confusion matrix visualization
-
-- ROC curves
