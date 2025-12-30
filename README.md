@@ -34,11 +34,6 @@ The goal is to build a lightweight, efficient, and explainable deepfake detectio
 ### Data Balancing
 
 * The dataset is **balanced between REAL and FAKE classes** to reduce class imbalance
-* Techniques may include:
-
-  * Undersampling
-  * Oversampling
-
 ---
 
 ##  Model
